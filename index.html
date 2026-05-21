@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CDes AI Tools Universe — University of Minnesota</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #FFFFFF;
+  --bg2:      #F7F6F3;
+  --bg3:      #EFEDE8;
+  --border:   #E2E0DA;
+  --border2:  #D0CEC8;
+  --text:     #1A1917;
+  --text2:    #6B6963;
+  --text3:    #A8A49E;
+  --shadow:   rgba(0,0,0,0.06);
+  --shadow2:  rgba(0,0,0,0.12);
+
+  /* Blue-to-slate discipline spectrum */
+  --arch:        #1B4F8A;
+  --arch-lt:     #EBF2FA;
+  --interior:    #2E6DA4;
+  --interior-lt: #EDF4FB;
+  --landscape:   #3A7D6E;
+  --landscape-lt:#EBF5F2;
+  --product:     #4A5FA8;
+  --product-lt:  #EEF0FA;
+  --graphic:     #6B5B9E;
+  --graphic-lt:  #F2EFF9;
+  --apparel:     #8A4F7D;
+  --apparel-lt:  #F7EEF5;
+  --retail:      #7A5C3A;
+  --retail-lt:   #F6F0E8;
+  --hfe:         #4A6375;
+  --hfe-lt:      #EDF2F5;
+  --ux:          #2B6CB0;
+  --ux-lt:       #EBF4FF;
+  --general:     #3D4F5C;
+  --general-lt:  #EEF1F3;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+}
+
+/* ── HEADER ── */
+header {
+  position: fixed; top: 0; left: 0; right: 0; height: 54px;
+  display: flex; align-items: center; padding: 0 20px; gap: 16px;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+}
+.logo {
+  font-family: "Libre Baskerville", serif;
+  font-size: 15px; color: var(--text);
+  white-space: nowrap; flex-shrink: 0;
+  letter-spacing: -0.01em;
+}
+.logo em { color: var(--arch); font-style: italic; }
+.hdiv { width: 1px; height: 18px; background: var(--border2); flex-shrink: 0; }
+
+.filters {
+  display: flex; gap: 5px; flex-wrap: nowrap;
+  overflow-x: auto; scrollbar-width: none; flex: 1;
+}
+.filters::-webkit-scrollbar { display: none; }
+
+.fbtn {
+  padding: 4px 11px; border-radius: 20px;
+  border: 1px solid var(--border2);
+  background: var(--bg);
+  color: var(--text2);
+  font-family: "DM Mono", monospace;
+  font-size: 10px; letter-spacing: 0.03em;
+  cursor: pointer; white-space: nowrap;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  flex-shrink: 0;
+}
+.fbtn:hover { background: var(--bg3); color: var(--text); }
+.fbtn.active { color: #fff; border-color: transparent; }
+
+.hstats {
+  display: flex; gap: 14px; align-items: center; flex-shrink: 0;
+}
+.hstat {
+  font-family: "DM Mono", monospace; font-size: 10px;
+  color: var(--text3); letter-spacing: 0.04em;
+}
+.hstat strong { color: var(--text); font-weight: 500; }
+
+/* ── CANVAS ── */
+#universe {
+  position: fixed; top: 54px; left: 0; right: 0; bottom: 40px;
+  cursor: grab; background: var(--bg);
+  background-image:
+    radial-gradient(circle at 20% 20%, #EBF2FA 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, #EEF1F3 0%, transparent 50%);
+}
+#universe:active { cursor: grabbing; }
+canvas { width: 100%; height: 100%; display: block; }
+
+/* ── FOOTER ── */
+footer {
+  position: fixed; bottom: 0; left: 0; right: 0; height: 40px;
+  display: flex; align-items: center; padding: 0 20px; gap: 16px;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid var(--border);
+  z-index: 100;
+}
+.legend {
+  display: flex; gap: 12px; flex-wrap: nowrap;
+  overflow-x: auto; scrollbar-width: none;
+}
+.legend::-webkit-scrollbar { display: none; }
+.litem {
+  display: flex; align-items: center; gap: 5px;
+  font-family: "DM Mono", monospace; font-size: 10px;
+  color: var(--text3); white-space: nowrap;
+  cursor: pointer; transition: color 0.12s;
+  letter-spacing: 0.02em;
+}
+.litem:hover { color: var(--text2); }
+.ldot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.fright {
+  margin-left: auto; flex-shrink: 0;
+  font-family: "DM Mono", monospace; font-size: 10px;
+  color: var(--text3);
+}
+.fright a { color: var(--arch); text-decoration: none; }
+.fright a:hover { text-decoration: underline; }
+
+/* ── TOOLTIP ── */
+#tooltip {
+  position: fixed;
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 12px 14px;
+  max-width: 220px;
+  pointer-events: none;
+  display: none; z-index: 200;
+  box-shadow: 0 4px 20px var(--shadow2);
+}
+.tt-name {
+  font-family: "Libre Baskerville", serif;
+  font-size: 14px; color: var(--text);
+  margin-bottom: 3px; line-height: 1.2;
+}
+.tt-vendor {
+  font-family: "DM Mono", monospace; font-size: 10px;
+  color: var(--text3); letter-spacing: 0.04em; margin-bottom: 7px;
+}
+.tt-flag {
+  display: inline-block; padding: 2px 7px;
+  border-radius: 12px; font-family: "DM Mono", monospace;
+  font-size: 10px; margin-bottom: 7px; border: 1px solid;
+}
+.flag-n { background: #EBF5F2; color: #2E7D5E; border-color: #B8DDD2; }
+.flag-e { background: #FEF7E8; color: #8A6020; border-color: #F0D89A; }
+.tt-cap { font-size: 11px; color: var(--text2); line-height: 1.5; }
+
+/* ── DETAIL PANEL ── */
+#panel {
+  position: fixed; top: 54px; right: 0; bottom: 40px;
+  width: 360px;
+  background: var(--bg);
+  border-left: 1px solid var(--border);
+  z-index: 150;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: -4px 0 24px var(--shadow);
+  transition: transform 0.2s ease;
+}
+#panel.open { display: flex; }
+
+.panel-header {
+  padding: 20px 20px 0;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 16px;
+  flex-shrink: 0;
+}
+.panel-close {
+  position: absolute; top: 14px; right: 14px;
+  width: 28px; height: 28px; border-radius: 6px;
+  border: 1px solid var(--border2);
+  background: var(--bg2); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--text2);
+  transition: background 0.12s;
+}
+.panel-close:hover { background: var(--bg3); }
+
+.panel-logo-wrap {
+  width: 48px; height: 48px; border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 12px; overflow: hidden; flex-shrink: 0;
+}
+.panel-logo-wrap img { width: 36px; height: 36px; object-fit: contain; }
+.panel-logo-placeholder {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Libre Baskerville", serif;
+  font-size: 16px; font-weight: 700; color: #fff;
+}
+
+.panel-name {
+  font-family: "Libre Baskerville", serif;
+  font-size: 20px; color: var(--text);
+  margin-bottom: 3px; line-height: 1.2;
+}
+.panel-vendor {
+  font-family: "DM Mono", monospace; font-size: 11px;
+  color: var(--text3); letter-spacing: 0.04em; margin-bottom: 10px;
+}
+.panel-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
+.panel-tag {
+  padding: 3px 9px; border-radius: 12px;
+  font-family: "DM Mono", monospace; font-size: 10px;
+  border: 1px solid; letter-spacing: 0.02em;
+}
+.panel-flags { display: flex; gap: 6px; }
+
+.panel-body {
+  flex: 1; overflow-y: auto; padding: 16px 20px;
+  scrollbar-width: thin; scrollbar-color: var(--border2) transparent;
+}
+
+.panel-section { margin-bottom: 18px; }
+.panel-section-title {
+  font-family: "DM Mono", monospace; font-size: 10px;
+  letter-spacing: 0.06em; color: var(--text3);
+  text-transform: uppercase; margin-bottom: 7px;
+}
+.panel-cap {
+  font-size: 13px; color: var(--text); line-height: 1.6;
+}
+.panel-stages { display: flex; flex-wrap: wrap; gap: 5px; }
+.panel-stage {
+  padding: 3px 9px; border-radius: 6px;
+  background: var(--bg2); border: 1px solid var(--border);
+  font-size: 11px; color: var(--text2);
+}
+.panel-discs { display: flex; flex-wrap: wrap; gap: 5px; }
+.panel-disc {
+  padding: 3px 9px; border-radius: 6px;
+  font-size: 11px; border: 1px solid;
+}
+
+.panel-images {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 6px; margin-top: 6px;
+}
+.panel-img {
+  aspect-ratio: 16/9; border-radius: 6px;
+  background: var(--bg3); border: 1px solid var(--border);
+  overflow: hidden; display: flex; align-items: center;
+  justify-content: center;
+}
+.panel-img img { width: 100%; height: 100%; object-fit: cover; }
+.panel-img-placeholder {
+  font-size: 10px; color: var(--text3);
+  font-family: "DM Mono", monospace; text-align: center; padding: 8px;
+}
+
+.panel-link {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px; border-radius: 8px;
+  background: var(--bg2); border: 1px solid var(--border);
+  text-decoration: none; color: var(--text);
+  font-size: 13px; transition: background 0.12s, border-color 0.12s;
+  margin-top: 4px;
+}
+.panel-link:hover { background: var(--bg3); border-color: var(--border2); }
+.panel-link-icon {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: var(--arch); display: flex;
+  align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.panel-link-icon svg { width: 14px; height: 14px; fill: white; }
+.panel-link-text { flex: 1; }
+.panel-link-label { font-size: 12px; font-weight: 500; }
+.panel-link-url { font-size: 10px; color: var(--text3); font-family: "DM Mono", monospace; }
+.panel-pricing {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 6px;
+  background: var(--bg2); border: 1px solid var(--border);
+  font-size: 12px; color: var(--text2);
+}
+
+/* ── CONNECTIONS HIGHLIGHT ── */
+canvas.has-selection { cursor: default; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">CDes <em>AI Universe</em></div>
+  <div class="hdiv"></div>
+  <div class="filters" id="filters">
+    <button class="fbtn active" data-f="all" style="background:#1B4F8A;border-color:#1B4F8A">All Tools</button>
+    <button class="fbtn" data-f="Architecture">Architecture</button>
+    <button class="fbtn" data-f="Interior Design">Interior Design</button>
+    <button class="fbtn" data-f="Landscape Architecture">Landscape Arch</button>
+    <button class="fbtn" data-f="Product Design">Product Design</button>
+    <button class="fbtn" data-f="Graphic Design">Graphic Design</button>
+    <button class="fbtn" data-f="Apparel Design">Apparel Design</button>
+    <button class="fbtn" data-f="Retail Merchandising">Retail Merch</button>
+    <button class="fbtn" data-f="Human Factors">Human Factors</button>
+    <button class="fbtn" data-f="UX Design">UX Design</button>
+  </div>
+  <div class="hdiv"></div>
+  <div class="hstats">
+    <div class="hstat"><strong>52</strong> tools</div>
+    <div class="hstat"><strong>48</strong> connections</div>
+  </div>
+</header>
+
+<div id="universe"><canvas id="c"></canvas></div>
+
+<div id="tooltip">
+  <div class="tt-name" id="tt-name"></div>
+  <div class="tt-vendor" id="tt-vendor"></div>
+  <div id="tt-flag"></div>
+  <div class="tt-cap" id="tt-cap"></div>
+</div>
+
+<div id="panel">
+  <button class="panel-close" id="panel-close">&#x2715;</button>
+  <div class="panel-header">
+    <div style="display:flex;gap:14px;align-items:flex-start">
+      <div class="panel-logo-wrap" id="panel-logo"></div>
+      <div style="flex:1">
+        <div class="panel-name" id="panel-name"></div>
+        <div class="panel-vendor" id="panel-vendor"></div>
+        <div class="panel-flags" id="panel-flag"></div>
+      </div>
+    </div>
+    <div class="panel-tags" id="panel-tags"></div>
+  </div>
+  <div class="panel-body">
+    <div class="panel-section">
+      <div class="panel-section-title">Key AI Capability</div>
+      <div class="panel-cap" id="panel-cap"></div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-section-title">CDes Design Stages</div>
+      <div class="panel-stages" id="panel-stages"></div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-section-title">Disciplines</div>
+      <div class="panel-discs" id="panel-discs"></div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-section-title">Pricing</div>
+      <div id="panel-pricing"></div>
+    </div>
+    <div class="panel-section" id="panel-images-section">
+      <div class="panel-section-title">Example Use</div>
+      <div class="panel-images" id="panel-images"></div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-section-title">Connects With</div>
+      <div class="panel-stages" id="panel-connects"></div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-section-title">Visit</div>
+      <a class="panel-link" id="panel-link" href="#" target="_blank">
+        <div class="panel-link-icon">
+          <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 4.42 3.58 8 8 8s8-3.58 8-8c0-4.42-3.58-8-8-8zm0 14.5A6.5 6.5 0 1 1 8 1.5a6.5 6.5 0 0 1 0 13zm.75-9.5H7.25v3.25L10 9.75l.75-1.3-2-1.18V5z"/></svg>
+        </div>
+        <div class="panel-link-text">
+          <div class="panel-link-label" id="panel-link-label"></div>
+          <div class="panel-link-url" id="panel-link-url"></div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="legend" id="legend">
+    <div class="litem" data-f="Architecture"><div class="ldot" style="background:#1B4F8A"></div>Architecture</div>
+    <div class="litem" data-f="Interior Design"><div class="ldot" style="background:#2E6DA4"></div>Interior</div>
+    <div class="litem" data-f="Landscape Architecture"><div class="ldot" style="background:#3A7D6E"></div>Landscape</div>
+    <div class="litem" data-f="Product Design"><div class="ldot" style="background:#4A5FA8"></div>Product</div>
+    <div class="litem" data-f="Graphic Design"><div class="ldot" style="background:#6B5B9E"></div>Graphic</div>
+    <div class="litem" data-f="Apparel Design"><div class="ldot" style="background:#8A4F7D"></div>Apparel</div>
+    <div class="litem" data-f="Retail Merchandising"><div class="ldot" style="background:#7A5C3A"></div>Retail</div>
+    <div class="litem" data-f="Human Factors"><div class="ldot" style="background:#4A6375"></div>Human Factors</div>
+    <div class="litem" data-f="UX Design"><div class="ldot" style="background:#2B6CB0"></div>UX Design</div>
+  </div>
+  <div class="fright">
+    University of Minnesota College of Design &nbsp;·&nbsp;
+    <a href="https://docs.google.com/spreadsheets/d/1Vl_x9QpvNc965y0BlEZaSH3LSqrySvNP" target="_blank">Full Spreadsheet</a>
+  </div>
+</footer>
+
+<script>
+const DISC_COLORS = {
+  'Architecture':           '#1B4F8A',
+  'Interior Design':        '#2E6DA4',
+  'Landscape Architecture': '#3A7D6E',
+  'Product Design':         '#4A5FA8',
+  'Graphic Design':         '#6B5B9E',
+  'Apparel Design':         '#8A4F7D',
+  'Retail Merchandising':   '#7A5C3A',
+  'Human Factors':          '#4A6375',
+  'UX Design':              '#2B6CB0',
+  'All':                    '#3D4F5C',
+};
+
+const TOOLS = [
+  {id:'T001',name:'Rhino 3D',vendor:'McNeel',flag:'e',discs:['Architecture','Product Design','Landscape Architecture'],stages:['Developing the Concept','Finalizing the Concept'],cap:'NURBS + mesh modeling; AI via Grasshopper, Veras, Enscape plugins',pricing:'Paid',url:'rhino3d.com',connects:['Grasshopper','Enscape','Veras','KeyShot'],size:22},
+  {id:'T002',name:'Grasshopper',vendor:'McNeel',flag:'e',discs:['Architecture','Landscape Architecture','Product Design'],stages:['Generating Ideas','Developing the Concept'],cap:'Algorithmic form-finding; ML bridge via Hops; structural and facade optimization',pricing:'Free w/ Rhino',url:'grasshopper3d.com',connects:['Rhino 3D','nTop'],size:17},
+  {id:'T005',name:'Adobe Firefly',vendor:'Adobe',flag:'n',discs:['Graphic Design','Apparel Design','UX Design'],stages:['Generating Ideas','Developing the Concept','Finalizing the Concept'],cap:'Generative fill, text-to-image, recolor inside Adobe CC; commercially safe training data',pricing:'Paid (CC sub)',url:'firefly.adobe.com',connects:['Adobe Illustrator AI','Canva Magic Studio'],size:19},
+  {id:'T006',name:'CLO 3D',vendor:'CLO Virtual Fashion',flag:'e',discs:['Apparel Design','Retail Merchandising'],stages:['Developing the Concept','Finalizing the Concept'],cap:'Physics-based garment simulation; AI fit prediction; pattern-accurate drape',pricing:'Paid',url:'clo3d.com',connects:['Optitex','Browzwear','Style3D'],size:18},
+  {id:'T007',name:'Midjourney',vendor:'Midjourney Inc.',flag:'n',discs:['All'],stages:['Making Discoveries','Generating Ideas'],cap:'Highest-quality concept imagery and mood boards; used across all design disciplines',pricing:'Paid',url:'midjourney.com',connects:['Adobe Firefly','DALL-E 3','Canva Magic Studio'],size:24},
+  {id:'T008',name:'Figma AI',vendor:'Figma',flag:'e',discs:['UX Design','Graphic Design'],stages:['Generating Ideas','Selecting Concepts','Developing the Concept','Finalizing the Concept'],cap:'AI layout generation, First Draft, Figma Weave, MCP agent writes to design files directly',pricing:'Paid',url:'figma.com',connects:['Uizard','v0 by Vercel','Dovetail','Maze'],size:20},
+  {id:'T009',name:'Claude',vendor:'Anthropic',flag:'n',discs:['All'],stages:['Collecting Information','Making Discoveries','Finalizing the Concept'],cap:'Literature synthesis, design briefs, task analysis, code generation, design narratives',pricing:'Free / Paid',url:'claude.ai',connects:['NotebookLM','Perplexity','Miro AI'],size:26},
+  {id:'T010',name:'NotebookLM',vendor:'Google',flag:'n',discs:['All'],stages:['Collecting Information','Making Discoveries'],cap:'Document-grounded AI synthesis; CDes three-database methodology validated',pricing:'Free',url:'notebooklm.google.com',connects:['Claude','Perplexity'],size:16},
+  {id:'T011',name:'DALL-E 3',vendor:'OpenAI',flag:'n',discs:['Graphic Design','Product Design'],stages:['Generating Ideas'],cap:'Rapid concept imagery inside ChatGPT; good for quick ideation rounds',pricing:'Paid (ChatGPT+)',url:'openai.com',connects:['Midjourney','Adobe Firefly'],size:13},
+  {id:'T012',name:'Autodesk Forma',vendor:'Autodesk',flag:'e',discs:['Architecture','Landscape Architecture'],stages:['Collecting Information','Making Discoveries','Generating Ideas'],cap:'Solar, wind, density, ecological AI analysis at site and urban scale',pricing:'Paid',url:'autodesk.com/forma',connects:['Rhino 3D','ArcGIS Pro'],size:17},
+  {id:'T013',name:'Enscape',vendor:'Chaos Group',flag:'e',discs:['Architecture','Interior Design','Landscape Architecture'],stages:['Developing the Concept','Finalizing the Concept'],cap:'Real-time rendering and VR walkthroughs; AI denoising; plugin for 5 BIM/CAD platforms',pricing:'Paid',url:'enscape3d.com',connects:['Rhino 3D','D5 Render','Veras'],size:17},
+  {id:'T014',name:'Stable Diffusion',vendor:'Stability AI',flag:'n',discs:['Graphic Design'],stages:['Generating Ideas'],cap:'Open-source image generation; enables brand-trained custom model fine-tuning',pricing:'Free (self-hosted)',url:'stability.ai',connects:['Adobe Firefly','Midjourney'],size:12},
+  {id:'T015',name:'v0 by Vercel',vendor:'Vercel',flag:'n',discs:['UX Design'],stages:['Developing the Concept','Finalizing the Concept'],cap:'React UI component generation from text prompts; functional code output',pricing:'Freemium',url:'v0.dev',connects:['Figma AI','GitHub Copilot'],size:13},
+  {id:'T016',name:'Optitex',vendor:'Optitex',flag:'e',discs:['Apparel Design','Retail Merchandising'],stages:['Developing the Concept','Finalizing the Concept'],cap:'AI grading, pattern making, fit prediction; production-grade pattern work',pricing:'Paid',url:'optitex.com',connects:['CLO 3D','Browzwear'],size:13},
+  {id:'T017',name:'Uizard',vendor:'Uizard',flag:'n',discs:['UX Design','Graphic Design'],stages:['Generating Ideas','Selecting Concepts'],cap:'Sketch to wireframe; prompt-to-UI; AI design chatbot for rapid iteration',pricing:'Freemium',url:'uizard.io',connects:['Figma AI','Google Stitch'],size:12},
+  {id:'T019',name:'Perplexity',vendor:'Perplexity AI',flag:'n',discs:['All'],stages:['Collecting Information'],cap:'Cited AI search; web-sourced research complement to NotebookLM',pricing:'Free / Paid',url:'perplexity.ai',connects:['Claude','NotebookLM'],size:14},
+  {id:'T020',name:'Gamma',vendor:'Gamma',flag:'n',discs:['All'],stages:['Finalizing the Concept'],cap:'AI-generated presentation decks; fast stakeholder communication tool',pricing:'Freemium',url:'gamma.app',connects:['Claude','Canva Magic Studio'],size:14},
+  {id:'T021',name:'Vizcom',vendor:'Vizcom',flag:'n',discs:['Product Design'],stages:['Generating Ideas','Developing the Concept'],cap:'Sketch-to-photorealistic render; real-time iteration; purpose-built for industrial design',pricing:'Freemium',url:'vizcom.ai',connects:['Rhino 3D','KeyShot','Fusion 360'],size:16},
+  {id:'T022',name:'Fusion 360',vendor:'Autodesk',flag:'e',discs:['Product Design'],stages:['Developing the Concept','Finalizing the Concept'],cap:'Generative design constraint-based multi-solution; AI AutoConstrain; integrated CAM',pricing:'Paid',url:'autodesk.com/fusion360',connects:['SolidWorks','nTop','KeyShot'],size:17},
+  {id:'T023',name:'SolidWorks',vendor:'Dassault',flag:'e',discs:['Product Design'],stages:['Developing the Concept','Finalizing the Concept'],cap:'AURA AI assistant with habit learning; generative assembly suggestions; photo-to-feature',pricing:'Paid',url:'solidworks.com',connects:['Fusion 360','KeyShot'],size:16},
+  {id:'T024',name:'Gravity Sketch',vendor:'Gravity Sketch',flag:'n',discs:['Product Design','Architecture'],stages:['Generating Ideas','Developing the Concept'],cap:'Immersive VR/AR 3D sketching; AI curve smoothing; bridges sketch-to-CAD phase',pricing:'Paid',url:'gravitysketch.com',connects:['Rhino 3D','Fusion 360'],size:14},
+  {id:'T025',name:'nTop',vendor:'nTopology',flag:'e',discs:['Product Design'],stages:['Developing the Concept','Finalizing the Concept'],cap:'Implicit modeling; field-driven lattice structures; performance 3D-printed parts',pricing:'Paid',url:'ntop.com',connects:['Fusion 360','SolidWorks'],size:13},
+  {id:'T026',name:'Miro AI',vendor:'Miro',flag:'e',discs:['All'],stages:['Collecting Information','Making Discoveries','Generating Ideas'],cap:'AI sticky note clustering; diagram generation; research synthesis on infinite canvas',pricing:'Freemium',url:'miro.com',connects:['Claude','Figma AI'],size:16},
+  {id:'T027',name:'KeyShot',vendor:'Luxion',flag:'e',discs:['Product Design','Architecture','Interior Design'],stages:['Finalizing the Concept'],cap:'Industry-standard photorealistic rendering; AI denoising; plugin for all major CAD platforms',pricing:'Paid',url:'keyshot.com',connects:['Rhino 3D','SolidWorks','Fusion 360'],size:16},
+  {id:'T028',name:'Prome AI',vendor:'Prome AI',flag:'n',discs:['Product Design','Architecture'],stages:['Generating Ideas','Developing the Concept'],cap:'AI rendering from sketches and 3D models; material and scene control',pricing:'Freemium',url:'prome.ai',connects:['Rhino 3D','Fusion 360'],size:12},
+  {id:'T029',name:'Veras',vendor:'EvolveLAB',flag:'n',discs:['Architecture','Interior Design'],stages:['Generating Ideas','Developing the Concept','Finalizing the Concept'],cap:'Text-prompt AI rendering inside 7 BIM/CAD platforms with Geometry Override control',pricing:'Paid',url:'chaos.com/veras',connects:['Rhino 3D','Enscape','Autodesk Forma'],size:16},
+  {id:'T030',name:'TestFit',vendor:'TestFit Inc.',flag:'n',discs:['Architecture'],stages:['Collecting Information','Making Discoveries'],cap:'Generative building layouts against zoning rules and site constraints; rapid feasibility',pricing:'Paid',url:'testfit.io',connects:['Autodesk Forma','Snaptrude'],size:14},
+  {id:'T031',name:'Snaptrude',vendor:'Snaptrude',flag:'n',discs:['Architecture'],stages:['Generating Ideas','Selecting Concepts','Developing the Concept'],cap:'AI agents: site analysis to program to massing to full BIM; exports to Revit with parameters',pricing:'Paid',url:'snaptrude.com',connects:['Autodesk Forma','Rhino 3D'],size:14},
+  {id:'T032',name:'D5 Render',vendor:'D5 Render',flag:'e',discs:['Architecture','Interior Design','Landscape Architecture'],stages:['Developing the Concept','Finalizing the Concept'],cap:'AI Material Generator from photo; AI Atmosphere Match; AI Scatter for vegetation',pricing:'Free / Paid',url:'d5render.com',connects:['Rhino 3D','Enscape','SketchUp'],size:14},
+  {id:'T033',name:'LookX',vendor:'LookX AI',flag:'n',discs:['Interior Design','Architecture'],stages:['Generating Ideas','Developing the Concept'],cap:'AI rendering from reference image or CAD model; preserves spatial geometry in output',pricing:'Paid',url:'lookx.ai',connects:['Rhino 3D','Veras'],size:13},
+  {id:'T034',name:'Planner 5D',vendor:'Planner 5D',flag:'e',discs:['Interior Design'],stages:['Generating Ideas','Selecting Concepts','Developing the Concept'],cap:'AI floor plan recognition from photo; 3D space layout; Design Generator for style variants',pricing:'Free / Paid',url:'planner5d.com',connects:['Enscape','D5 Render'],size:13},
+  {id:'T035',name:'ArcGIS Pro',vendor:'Esri',flag:'e',discs:['Landscape Architecture','Architecture'],stages:['Collecting Information','Making Discoveries'],cap:'AI-assisted spatial analysis, environmental modeling, land-use studies, 3D city planning',pricing:'Paid',url:'esri.com',connects:['Autodesk Forma','Vectorworks Landmark'],size:15},
+  {id:'T036',name:'Vectorworks Landmark',vendor:'Vectorworks',flag:'e',discs:['Landscape Architecture'],stages:['Developing the Concept','Finalizing the Concept'],cap:'Landscape BIM integrating GIS, drone, and field data with model-linked real-time updates',pricing:'Paid',url:'vectorworks.net',connects:['ArcGIS Pro','Rhino 3D'],size:14},
+  {id:'T037',name:'Canva Magic Studio',vendor:'Canva',flag:'e',discs:['Graphic Design','Retail Merchandising'],stages:['Generating Ideas','Finalizing the Concept'],cap:'Magic Design, Magic Layers photo to editable layers, Brand Kit auto-apply; 43% business adoption',pricing:'Freemium',url:'canva.com',connects:['Adobe Firefly','Midjourney','Gamma'],size:16},
+  {id:'T038',name:'Recraft',vendor:'Recraft',flag:'n',discs:['Graphic Design'],stages:['Generating Ideas','Developing the Concept','Finalizing the Concept'],cap:'Native SVG vector output from text prompts; icons and logos without manual tracing',pricing:'Paid',url:'recraft.ai',connects:['Adobe Illustrator AI','Figma AI'],size:13},
+  {id:'T039',name:'Adobe Illustrator AI',vendor:'Adobe',flag:'e',discs:['Graphic Design','Apparel Design'],stages:['Developing the Concept','Finalizing the Concept'],cap:'Text-to-vector, Generative Recolor, AI font matching; Firefly integrated directly',pricing:'Paid (CC sub)',url:'adobe.com',connects:['Adobe Firefly','Recraft'],size:14},
+  {id:'T040',name:'Browzwear',vendor:'Browzwear',flag:'e',discs:['Apparel Design','Retail Merchandising'],stages:['Developing the Concept','Finalizing the Concept'],cap:'3D garment visualization, fabric simulation, digital twin, batch product image generation',pricing:'Paid',url:'browzwear.com',connects:['CLO 3D','Optitex'],size:14},
+  {id:'T041',name:'Style3D',vendor:'Style3D AI',flag:'n',discs:['Apparel Design'],stages:['Generating Ideas','Developing the Concept','Finalizing the Concept'],cap:'AI garment simulation and cloud rendering; sketch-to-design pipeline; fastest growing 2026',pricing:'Paid',url:'style3d.ai',connects:['CLO 3D','Browzwear'],size:14},
+  {id:'T042',name:'Heuritech',vendor:'Heuritech',flag:'n',discs:['Apparel Design','Retail Merchandising'],stages:['Collecting Information','Making Discoveries'],cap:'Image recognition and social media trend signals; forecasts colors, prints, silhouettes',pricing:'Paid',url:'heuritech.com',connects:['WGSN','CLO 3D'],size:13},
+  {id:'T043',name:'WGSN',vendor:'WGSN',flag:'e',discs:['Apparel Design','Retail Merchandising'],stages:['Collecting Information','Making Discoveries'],cap:'AI-enhanced trend forecasting, consumer insight, color and material direction',pricing:'Paid',url:'wgsn.com',connects:['Heuritech','CLO 3D'],size:14},
+  {id:'T044',name:'WGSN Insight',vendor:'WGSN',flag:'e',discs:['Retail Merchandising'],stages:['Collecting Information','Making Discoveries'],cap:'AI consumer behavior analysis; demand forecasting signals; assortment planning direction',pricing:'Paid',url:'wgsn.com',connects:['WGSN','Joor AI'],size:12},
+  {id:'T045',name:'Joor AI',vendor:'Joor',flag:'e',discs:['Retail Merchandising'],stages:['Making Discoveries','Selecting Concepts'],cap:'AI inventory optimization and buying decisions in digital wholesale platform',pricing:'Paid',url:'joor.com',connects:['Browzwear','WGSN Insight'],size:12},
+  {id:'T046',name:'Perch Interactive',vendor:'Perch',flag:'n',discs:['Retail Merchandising'],stages:['Developing the Concept','Finalizing the Concept'],cap:'Sensor-triggered AI product storytelling on physical retail displays',pricing:'Paid',url:'perchinteractive.com',connects:['Canva Magic Studio'],size:11},
+  {id:'T047',name:'Dovetail',vendor:'Dovetail',flag:'n',discs:['Human Factors','UX Design'],stages:['Collecting Information','Making Discoveries'],cap:'Auto-transcription, AI theme clustering, sentiment analysis, research repository',pricing:'Paid',url:'dovetail.com',connects:['Maze','UserTesting','Miro AI'],size:15},
+  {id:'T048',name:'Maze',vendor:'Maze',flag:'n',discs:['Human Factors','UX Design'],stages:['Selecting Concepts','Redesigning / V2'],cap:'Figma prototype testing; task success metrics; AI thematic clustering of responses',pricing:'Freemium',url:'maze.co',connects:['Figma AI','Dovetail','UserTesting'],size:14},
+  {id:'T049',name:'UserTesting',vendor:'UserTesting',flag:'e',discs:['Human Factors','UX Design'],stages:['Collecting Information','Selecting Concepts','Redesigning / V2'],cap:'AI video analysis and sentiment summarization; large screened participant panel',pricing:'Paid',url:'usertesting.com',connects:['Dovetail','Maze'],size:14},
+  {id:'T050',name:'CATIA Ergonomics',vendor:'Dassault',flag:'e',discs:['Human Factors'],stages:['Making Discoveries','Developing the Concept'],cap:'AI posture prediction, reach zone analysis, digital human simulation for workspace design',pricing:'Paid',url:'3ds.com',connects:['SolidWorks','Rhino 3D'],size:13},
+  {id:'T051',name:'AI Posture Analysis',vendor:'Various',flag:'n',discs:['Human Factors'],stages:['Collecting Information','Making Discoveries'],cap:'Computer vision REBA/RULA scoring from video; automated MSD risk classification',pricing:'Varies',url:'—',connects:['CATIA Ergonomics'],size:12},
+  {id:'T052',name:'Google Stitch',vendor:'Google Labs',flag:'n',discs:['UX Design','Graphic Design'],stages:['Generating Ideas','Selecting Concepts'],cap:'Text, sketch, and voice to UI on infinite canvas; AI agents generate full user journeys',pricing:'Free (beta)',url:'labs.google',connects:['Figma AI','v0 by Vercel','Uizard'],size:14},
+];
+
+// Build name-to-index map for edge connections
+const nameMap = {};
+TOOLS.forEach((t,i) => { nameMap[t.name] = i; });
+
+const EDGES = [];
+TOOLS.forEach((t, i) => {
+  (t.connects || []).forEach(cname => {
+    const j = nameMap[cname];
+    if (j !== undefined && j > i) EDGES.push([i, j]);
+  });
+});
+
+// ── CANVAS SETUP ──────────────────────────────────────────────────────────────
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const wrap = document.getElementById('universe');
+let W, H, dpr;
+let nodes = [];
+let activeFilter = 'all';
+let hoveredNode = null;
+let selectedNode = null;
+let panX = 0, panY = 0, zoom = 1;
+let isDragging = false, lastMX = 0, lastMY = 0;
+let didDrag = false;
+let simFrame = 0;
+
+const CLUSTER = {
+  'Architecture':           {x:0.22,y:0.25},
+  'Interior Design':        {x:0.18,y:0.55},
+  'Landscape Architecture': {x:0.12,y:0.75},
+  'Product Design':         {x:0.45,y:0.18},
+  'Graphic Design':         {x:0.72,y:0.22},
+  'Apparel Design':         {x:0.80,y:0.55},
+  'Retail Merchandising':   {x:0.82,y:0.78},
+  'Human Factors':          {x:0.55,y:0.82},
+  'UX Design':              {x:0.68,y:0.68},
+  'All':                    {x:0.50,y:0.50},
+};
+
+function resize() {
+  dpr = Math.min(window.devicePixelRatio||1,2);
+  W = wrap.clientWidth; H = wrap.clientHeight;
+  canvas.width = W*dpr; canvas.height = H*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  if (!nodes.length) initNodes();
+}
+
+function initNodes() {
+  nodes = TOOLS.map(t => {
+    const pd = t.discs.includes('All') ? 'All' : t.discs[0];
+    const c = CLUSTER[pd] || {x:0.5,y:0.5};
+    const sp = t.discs.includes('All') ? 0.04 : 0.10;
+    return {
+      tool: t,
+      x: (c.x + (Math.random()-0.5)*sp) * W,
+      y: (c.y + (Math.random()-0.5)*sp) * H,
+      vx: 0, vy: 0,
+    };
+  });
+}
+
+// ── PHYSICS ───────────────────────────────────────────────────────────────────
+function simulate() {
+  const rep = 1600, att = 0.016, damp = 0.80;
+  for (let i=0;i<nodes.length;i++) {
+    const a = nodes[i];
+    for (let j=i+1;j<nodes.length;j++) {
+      const b = nodes[j];
+      const dx=a.x-b.x, dy=a.y-b.y;
+      const d=Math.sqrt(dx*dx+dy*dy)||1;
+      const min=(a.tool.size+b.tool.size+14);
+      if(d<min*2.5){
+        const f=rep/(d*d);
+        const fx=(dx/d)*f,fy=(dy/d)*f;
+        a.vx+=fx;a.vy+=fy;b.vx-=fx;b.vy-=fy;
+      }
+    }
+    EDGES.forEach(([ii,jj])=>{
+      if(ii!==i&&jj!==i) return;
+      const o=nodes[ii===i?jj:ii];
+      const dx=o.x-a.x,dy=o.y-a.y;
+      const d=Math.sqrt(dx*dx+dy*dy)||1;
+      const ideal=110;
+      const f=(d-ideal)*att;
+      a.vx+=(dx/d)*f;a.vy+=(dy/d)*f;
+    });
+    a.vx+=(W/2-a.x)*0.0003;
+    a.vy+=(H/2-a.y)*0.0003;
+    a.vx*=damp;a.vy*=damp;
+    a.x+=a.vx;a.y+=a.vy;
+    const pad=a.tool.size+16;
+    if(a.x<pad){a.x=pad;a.vx*=-0.4;}
+    if(a.x>W-pad){a.x=W-pad;a.vx*=-0.4;}
+    if(a.y<pad){a.y=pad;a.vy*=-0.4;}
+    if(a.y>H-pad){a.y=H-pad;a.vy*=-0.4;}
+  }
+}
+
+// ── DRAW ──────────────────────────────────────────────────────────────────────
+function nodeVisible(node) {
+  if (activeFilter==='all') return true;
+  return node.tool.discs.includes(activeFilter)||node.tool.discs.includes('All');
+}
+
+function isConnected(i, sel) {
+  if (sel===null) return false;
+  return EDGES.some(([a,b])=>(a===i&&b===sel)||(b===i&&a===sel));
+}
+
+function getColor(tool) {
+  if (tool.discs.includes('All')) return DISC_COLORS['All'];
+  return DISC_COLORS[tool.discs[0]]||'#3D4F5C';
+}
+
+function fitText(text, maxWidth, ctx) {
+  // Returns font size that fits text within maxWidth
+  let size = 11;
+  ctx.font = `500 ${size}px "DM Sans", sans-serif`;
+  while (ctx.measureText(text).width > maxWidth && size > 7) {
+    size -= 0.5;
+    ctx.font = `500 ${size}px "DM Sans", sans-serif`;
+  }
+  return size;
+}
+
+function draw() {
+  ctx.clearRect(0,0,W,H);
+  ctx.save();
+  ctx.translate(panX,panY);
+  ctx.scale(zoom,zoom);
+
+  // Edges
+  EDGES.forEach(([ii,jj])=>{
+    const a=nodes[ii],b=nodes[jj];
+    if(!a||!b) return;
+    const aVis=nodeVisible(a),bVis=nodeVisible(b);
+    let alpha=0;
+    if (selectedNode!==null) {
+      if (ii===selectedNode||jj===selectedNode) alpha=0.45;
+      else alpha=0.03;
+    } else {
+      alpha=(aVis&&bVis)?0.18:0.03;
+    }
+    ctx.beginPath();
+    ctx.moveTo(a.x,a.y);
+    ctx.lineTo(b.x,b.y);
+    ctx.strokeStyle=`rgba(100,120,140,${alpha})`;
+    ctx.lineWidth = (selectedNode!==null&&(ii===selectedNode||jj===selectedNode)) ? 1.2 : 0.7;
+    ctx.stroke();
+  });
+
+  // Nodes
+  nodes.forEach((node,i)=>{
+    const vis=nodeVisible(node);
+    const isSel=selectedNode===i;
+    const isHov=hoveredNode===i;
+    const isConn=isConnected(i,selectedNode);
+    const color=getColor(node.tool);
+    const r=node.tool.size;
+
+    let alpha=1;
+    if (!vis) alpha=0.08;
+    else if (selectedNode!==null&&!isSel&&!isConn) alpha=0.18;
+
+    ctx.globalAlpha=alpha;
+
+    // Shadow for selected
+    if (isSel) {
+      ctx.beginPath();
+      ctx.arc(node.x,node.y,r+6,0,Math.PI*2);
+      ctx.fillStyle=color+'28';
+      ctx.fill();
+    }
+
+    // Node fill
+    ctx.beginPath();
+    ctx.arc(node.x,node.y,r,0,Math.PI*2);
+    if (isSel) {
+      ctx.fillStyle=color;
+    } else if (isHov) {
+      ctx.fillStyle=color+'18';
+    } else {
+      ctx.fillStyle=color+'12';
+    }
+    ctx.fill();
+
+    // Border
+    ctx.beginPath();
+    ctx.arc(node.x,node.y,r,0,Math.PI*2);
+    ctx.strokeStyle = (isSel||isHov) ? color : color+'88';
+    ctx.lineWidth = (isSel||isHov) ? 1.5 : 0.8;
+    ctx.stroke();
+
+    // Text — always fits
+    const innerW = (r - 4) * 2;
+    const words = node.tool.name.split(' ');
+    ctx.fillStyle = isSel ? '#FFFFFF' : color;
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+
+    if (words.length === 1) {
+      const fs = fitText(node.tool.name, innerW, ctx);
+      ctx.font = `500 ${fs}px "DM Sans", sans-serif`;
+      ctx.fillText(node.tool.name, node.x, node.y);
+    } else {
+      // Try single line first
+      const fs1 = fitText(node.tool.name, innerW, ctx);
+      if (fs1 >= 8.5) {
+        ctx.font = `500 ${fs1}px "DM Sans", sans-serif`;
+        ctx.fillText(node.tool.name, node.x, node.y);
+      } else {
+        // Split into two lines
+        const mid = Math.ceil(words.length/2);
+        const line1 = words.slice(0,mid).join(' ');
+        const line2 = words.slice(mid).join(' ');
+        const fs2 = Math.min(
+          fitText(line1, innerW, ctx),
+          fitText(line2, innerW, ctx)
+        );
+        ctx.font = `500 ${fs2}px "DM Sans", sans-serif`;
+        const lh = fs2 * 1.25;
+        ctx.fillText(line1, node.x, node.y - lh/2);
+        ctx.fillText(line2, node.x, node.y + lh/2);
+      }
+    }
+
+    ctx.globalAlpha=1;
+  });
+
+  ctx.restore();
+}
+
+// ── LOOP ──────────────────────────────────────────────────────────────────────
+function loop() {
+  requestAnimationFrame(loop);
+  if (simFrame++<320) simulate();
+  draw();
+}
+
+// ── PANEL ─────────────────────────────────────────────────────────────────────
+function openPanel(i) {
+  const t = TOOLS[i];
+  const color = getColor(t);
+
+  // Logo placeholder with initial
+  const logoEl = document.getElementById('panel-logo');
+  logoEl.innerHTML = `<div class="panel-logo-placeholder" style="background:${color}">${t.name[0]}</div>`;
+
+  document.getElementById('panel-name').textContent = t.name;
+  document.getElementById('panel-vendor').textContent = t.vendor;
+
+  const flagEl = document.getElementById('panel-flag');
+  flagEl.innerHTML = `<span class="tt-flag ${t.flag==='n'?'flag-n':'flag-e'}">${t.flag==='n'?'AI-native':'AI-enhanced'}</span>`;
+
+  // Discipline tags
+  const tagsEl = document.getElementById('panel-tags');
+  tagsEl.innerHTML = '';
+  const discs = t.discs.includes('All') ? Object.keys(DISC_COLORS).filter(d=>d!=='All') : t.discs;
+  discs.forEach(d=>{
+    const c=DISC_COLORS[d]||color;
+    tagsEl.innerHTML+=`<span class="panel-disc" style="background:${c}15;color:${c};border-color:${c}40">${d}</span>`;
+  });
+
+  document.getElementById('panel-cap').textContent = t.cap;
+
+  // Stages
+  const stagesEl = document.getElementById('panel-stages');
+  stagesEl.innerHTML = t.stages.map(s=>`<span class="panel-stage">${s}</span>`).join('');
+
+  // Disciplines
+  document.getElementById('panel-discs').innerHTML = discs.map(d=>{
+    const c=DISC_COLORS[d]||color;
+    return `<span class="panel-disc" style="background:${c}15;color:${c};border-color:${c}40">${d}</span>`;
+  }).join('');
+
+  // Pricing
+  document.getElementById('panel-pricing').innerHTML =
+    `<span class="panel-pricing">${t.pricing}</span>`;
+
+  // Connects with
+  const connEl = document.getElementById('panel-connects');
+  connEl.innerHTML = (t.connects||[]).map(c=>`<span class="panel-stage">${c}</span>`).join('') || '<span style="color:var(--text3);font-size:11px">None mapped yet</span>';
+
+  // Images — placeholder for now
+  const imgEl = document.getElementById('panel-images');
+  imgEl.innerHTML = `
+    <div class="panel-img"><div class="panel-img-placeholder">Example image<br>coming soon</div></div>
+    <div class="panel-img"><div class="panel-img-placeholder">Example image<br>coming soon</div></div>
+  `;
+
+  // Link
+  const url = t.url && t.url!=='—' ? (t.url.startsWith('http')?t.url:'https://'+t.url) : '#';
+  document.getElementById('panel-link').href = url;
+  document.getElementById('panel-link-label').textContent = t.name + ' Website';
+  document.getElementById('panel-link-url').textContent = t.url||'—';
+  if (t.url==='—') document.getElementById('panel-link').style.opacity='0.4';
+  else document.getElementById('panel-link').style.opacity='1';
+
+  document.getElementById('panel').classList.add('open');
+}
+
+document.getElementById('panel-close').addEventListener('click',()=>{
+  document.getElementById('panel').classList.remove('open');
+  selectedNode=null;
+});
+
+// ── MOUSE ─────────────────────────────────────────────────────────────────────
+function getHovered(mx,my) {
+  const wx=(mx-panX)/zoom, wy=(my-panY)/zoom;
+  for (let i=nodes.length-1;i>=0;i--) {
+    const n=nodes[i];
+    if(Math.hypot(wx-n.x,wy-n.y)<n.tool.size+4) return i;
+  }
+  return null;
+}
+
+canvas.addEventListener('mousemove',e=>{
+  const rect=canvas.getBoundingClientRect();
+  const mx=e.clientX-rect.left, my=e.clientY-rect.top;
+
+  if(isDragging){
+    const dx=mx-lastMX, dy=my-lastMY;
+    if(Math.abs(dx)>2||Math.abs(dy)>2) didDrag=true;
+    panX+=dx; panY+=dy;
+    lastMX=mx; lastMY=my;
+    return;
+  }
+
+  hoveredNode=getHovered(mx,my);
+  canvas.style.cursor=hoveredNode!==null?'pointer':'grab';
+
+  const tt=document.getElementById('tooltip');
+  if(hoveredNode!==null&&selectedNode===null){
+    const t=TOOLS[hoveredNode];
+    document.getElementById('tt-name').textContent=t.name;
+    document.getElementById('tt-vendor').textContent=t.vendor;
+    const flagEl=document.getElementById('tt-flag');
+    flagEl.className='tt-flag '+(t.flag==='n'?'flag-n':'flag-e');
+    flagEl.textContent=t.flag==='n'?'AI-native':'AI-enhanced';
+    document.getElementById('tt-cap').textContent=t.cap;
+    let tx=e.clientX+14, ty=e.clientY-10;
+    if(tx+230>window.innerWidth) tx=e.clientX-240;
+    if(ty+150>window.innerHeight) ty=e.clientY-140;
+    tt.style.left=tx+'px'; tt.style.top=ty+'px';
+    tt.style.display='block';
+  } else {
+    tt.style.display='none';
+  }
+});
+
+canvas.addEventListener('mousedown',e=>{
+  const rect=canvas.getBoundingClientRect();
+  lastMX=e.clientX-rect.left; lastMY=e.clientY-rect.top;
+  isDragging=true; didDrag=false;
+});
+
+canvas.addEventListener('mouseup',e=>{
+  isDragging=false;
+  if(!didDrag){
+    const rect=canvas.getBoundingClientRect();
+    const clicked=getHovered(e.clientX-rect.left,e.clientY-rect.top);
+    if(clicked!==null){
+      selectedNode=clicked;
+      document.getElementById('tooltip').style.display='none';
+      openPanel(clicked);
+    } else {
+      selectedNode=null;
+      document.getElementById('panel').classList.remove('open');
+    }
+  }
+});
+
+canvas.addEventListener('mouseleave',()=>{
+  isDragging=false; hoveredNode=null;
+  document.getElementById('tooltip').style.display='none';
+});
+
+canvas.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const rect=canvas.getBoundingClientRect();
+  const mx=e.clientX-rect.left, my=e.clientY-rect.top;
+  const delta=e.deltaY>0?0.88:1.12;
+  const nz=Math.max(0.25,Math.min(3.5,zoom*delta));
+  panX=mx-(mx-panX)*(nz/zoom);
+  panY=my-(my-panY)*(nz/zoom);
+  zoom=nz;
+},{passive:false});
+
+// ── FILTERS — instant, no physics re-run ─────────────────────────────────────
+document.getElementById('filters').addEventListener('click',e=>{
+  const btn=e.target.closest('.fbtn');
+  if(!btn) return;
+  activeFilter=btn.dataset.f;
+  document.querySelectorAll('.fbtn').forEach(b=>{
+    b.classList.remove('active');
+    b.style.background='';
+    b.style.borderColor='';
+    b.style.color='';
+  });
+  btn.classList.add('active');
+  const col=activeFilter==='all'?'#1B4F8A':(DISC_COLORS[activeFilter]||'#1B4F8A');
+  btn.style.background=col;
+  btn.style.borderColor=col;
+  btn.style.color='#fff';
+  // Close panel on filter change
+  selectedNode=null;
+  document.getElementById('panel').classList.remove('open');
+});
+
+document.getElementById('legend').addEventListener('click',e=>{
+  const item=e.target.closest('.litem');
+  if(!item) return;
+  const btn=document.querySelector(`[data-f="${item.dataset.f}"]`);
+  if(btn) btn.click();
+});
+
+window.addEventListener('resize',resize);
+resize();
+loop();
+</script>
+</body>
+</html>
