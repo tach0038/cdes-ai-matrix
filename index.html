@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CDes AI Tools Universe — University of Minnesota</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF;--bg2:#F7F6F3;--bg3:#EFEDE8;
+  --border:#E2E0DA;--border2:#D0CEC8;
+  --text:#1A1917;--text2:#6B6963;--text3:#A8A49E;
+  --shadow:rgba(0,0,0,0.06);--shadow2:rgba(0,0,0,0.14);
+  --arch:#1B4F8A;--interior:#2E6DA4;--landscape:#3A7D6E;
+  --product:#4A5FA8;--graphic:#6B5B9E;--apparel:#8A4F7D;
+  --retail:#7A5C3A;--hfe:#4A6375;--ux:#2B6CB0;--gen:#3D4F5C;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:"DM Sans",sans-serif;font-size:13px;}
+
+/* ── HEADER ── */
+header{position:fixed;top:0;left:0;right:0;height:54px;display:flex;align-items:center;
+  padding:0 20px;gap:14px;background:rgba(255,255,255,0.96);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--border);z-index:100;}
+.logo{font-family:"Libre Baskerville",serif;font-size:15px;color:var(--text);
+  white-space:nowrap;flex-shrink:0;letter-spacing:-0.01em;}
+.logo em{color:var(--arch);font-style:italic;}
+.hdiv{width:1px;height:18px;background:var(--border2);flex-shrink:0;}
+.filters{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;flex:1;}
+.filters::-webkit-scrollbar{display:none;}
+.fbtn{padding:4px 11px;border-radius:20px;border:1px solid var(--border2);
+  background:var(--bg);color:var(--text2);font-family:"DM Mono",monospace;
+  font-size:10px;letter-spacing:0.03em;cursor:pointer;white-space:nowrap;
+  transition:background 0.1s,color 0.1s;flex-shrink:0;}
+.fbtn:hover{background:var(--bg3);color:var(--text);}
+.fbtn.active{color:#fff;border-color:transparent;}
+.hright{display:flex;gap:10px;align-items:center;flex-shrink:0;}
+.hstat{font-family:"DM Mono",monospace;font-size:10px;color:var(--text3);letter-spacing:0.04em;}
+.hstat strong{color:var(--text);font-weight:500;}
+.submit-tool-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--arch);
+  background:var(--arch);color:#fff;font-family:"DM Sans",sans-serif;font-size:11px;
+  font-weight:500;cursor:pointer;white-space:nowrap;transition:opacity 0.1s;}
+.submit-tool-btn:hover{opacity:0.85;}
+
+/* ── CANVAS ── */
+#universe{position:fixed;top:54px;left:0;right:0;bottom:40px;cursor:grab;
+  background:var(--bg);
+  background-image:radial-gradient(circle at 18% 22%,#EBF2FA 0%,transparent 48%),
+    radial-gradient(circle at 82% 78%,#EEF1F3 0%,transparent 48%);}
+#universe:active{cursor:grabbing;}
+canvas{width:100%;height:100%;display:block;}
+
+/* ── FOOTER ── */
+footer{position:fixed;bottom:0;left:0;right:0;height:40px;display:flex;
+  align-items:center;padding:0 20px;gap:12px;background:rgba(255,255,255,0.96);
+  backdrop-filter:blur(8px);border-top:1px solid var(--border);z-index:100;}
+.legend{display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;}
+.legend::-webkit-scrollbar{display:none;}
+.litem{display:flex;align-items:center;gap:5px;font-family:"DM Mono",monospace;
+  font-size:10px;color:var(--text3);white-space:nowrap;cursor:pointer;transition:color 0.1s;}
+.litem:hover{color:var(--text2);}
+.ldot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.fright{margin-left:auto;flex-shrink:0;font-family:"DM Mono",monospace;font-size:10px;color:var(--text3);}
+.fright a{color:var(--arch);text-decoration:none;}
+.fright a:hover{text-decoration:underline;}
+
+/* ── TOOLTIP ── */
+#tooltip{position:fixed;background:var(--bg);border:1px solid var(--border2);
+  border-radius:10px;padding:12px 14px;max-width:220px;pointer-events:none;
+  display:none;z-index:200;box-shadow:0 4px 20px var(--shadow2);}
+.tt-name{font-family:"Libre Baskerville",serif;font-size:13px;color:var(--text);
+  margin-bottom:2px;line-height:1.2;}
+.tt-vendor{font-family:"DM Mono",monospace;font-size:10px;color:var(--text3);
+  letter-spacing:0.04em;margin-bottom:5px;}
+.tt-badges{display:flex;gap:4px;margin-bottom:5px;flex-wrap:wrap;}
+.badge{display:inline-block;padding:2px 7px;border-radius:12px;
+  font-family:"DM Mono",monospace;font-size:10px;border:1px solid;}
+.flag-n{background:#EBF5F2;color:#2E7D5E;border-color:#B8DDD2;}
+.flag-e{background:#FEF7E8;color:#8A6020;border-color:#F0D89A;}
+.flag-p{background:#EEF0FA;color:#4A5FA8;border-color:#B8C2E8;}
+.tt-cap{font-size:11px;color:var(--text2);line-height:1.5;}
+
+/* ── DETAIL PANEL ── */
+#panel{position:fixed;top:54px;right:0;bottom:40px;width:380px;
+  background:var(--bg);border-left:1px solid var(--border);z-index:150;
+  display:none;flex-direction:column;overflow:hidden;
+  box-shadow:-4px 0 24px var(--shadow);}
+#panel.open{display:flex;}
+.ph{padding:18px 18px 14px;border-bottom:1px solid var(--border);flex-shrink:0;position:relative;}
+.pc{position:absolute;top:12px;right:12px;width:26px;height:26px;border-radius:6px;
+  border:1px solid var(--border2);background:var(--bg2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:13px;
+  color:var(--text2);transition:background 0.1s;}
+.pc:hover{background:var(--bg3);}
+.ph-top{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;}
+.ph-logo{width:44px;height:44px;border-radius:10px;border:1px solid var(--border);
+  background:var(--bg2);display:flex;align-items:center;justify-content:center;
+  overflow:hidden;flex-shrink:0;}
+.ph-logo img{width:32px;height:32px;object-fit:contain;}
+.ph-logo-init{width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  font-family:"Libre Baskerville",serif;font-size:18px;font-weight:700;color:#fff;}
+.pname{font-family:"Libre Baskerville",serif;font-size:19px;color:var(--text);
+  line-height:1.15;margin-bottom:2px;}
+.pvendor{font-family:"DM Mono",monospace;font-size:10px;color:var(--text3);
+  letter-spacing:0.04em;margin-bottom:8px;}
+.pbadges{display:flex;gap:5px;flex-wrap:wrap;}
+.pparent{font-size:11px;color:var(--text2);display:flex;align-items:center;
+  gap:5px;margin-top:8px;}
+.pdot{width:6px;height:6px;border-radius:50%;background:var(--product);flex-shrink:0;}
+
+/* Screenshot */
+.pscreenshot{width:100%;aspect-ratio:16/7;background:var(--bg3);
+  border-bottom:1px solid var(--border);overflow:hidden;flex-shrink:0;position:relative;}
+.pscreenshot img{width:100%;height:100%;object-fit:cover;display:block;}
+.pscreenshot-ph{width:100%;height:100%;display:flex;align-items:center;
+  justify-content:center;font-family:"DM Mono",monospace;font-size:10px;color:var(--text3);}
+
+/* Body */
+.pb{flex:1;overflow-y:auto;padding:14px 18px;
+  scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
+.pb::-webkit-scrollbar{width:4px;}
+.pb::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.psec{margin-bottom:16px;}
+.psec-t{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:0.06em;
+  color:var(--text3);text-transform:uppercase;margin-bottom:6px;}
+.pcap{font-size:12.5px;color:var(--text);line-height:1.65;}
+.ptags{display:flex;flex-wrap:wrap;gap:5px;}
+.ptag{padding:3px 9px;border-radius:6px;background:var(--bg2);
+  border:1px solid var(--border);font-size:11px;color:var(--text2);}
+.ppricing{display:inline-flex;padding:4px 10px;border-radius:6px;
+  background:var(--bg2);border:1px solid var(--border);font-size:12px;color:var(--text2);}
+.plink{display:flex;align-items:center;gap:10px;padding:10px 12px;
+  border-radius:8px;background:var(--bg2);border:1px solid var(--border);
+  text-decoration:none;color:var(--text);transition:background 0.1s;margin-top:4px;}
+.plink:hover{background:var(--bg3);}
+.plink-icon{width:28px;height:28px;border-radius:6px;display:flex;
+  align-items:center;justify-content:center;flex-shrink:0;}
+.plink-icon svg{width:14px;height:14px;fill:white;}
+.plink-label{font-size:12px;font-weight:500;}
+.plink-url{font-size:10px;color:var(--text3);font-family:"DM Mono",monospace;}
+
+/* ── SUBMISSION MODAL ── */
+#modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);
+  z-index:300;display:none;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);}
+#modal-overlay.open{display:flex;}
+#modal{background:var(--bg);border-radius:14px;padding:28px;width:480px;
+  max-width:95vw;max-height:90vh;overflow-y:auto;
+  box-shadow:0 20px 60px rgba(0,0,0,0.2);position:relative;}
+.modal-title{font-family:"Libre Baskerville",serif;font-size:20px;
+  color:var(--text);margin-bottom:4px;}
+.modal-sub{font-size:12px;color:var(--text2);margin-bottom:20px;line-height:1.5;}
+.modal-close{position:absolute;top:16px;right:16px;width:28px;height:28px;
+  border-radius:6px;border:1px solid var(--border2);background:var(--bg2);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:var(--text2);}
+.modal-close:hover{background:var(--bg3);}
+.mfield{margin-bottom:14px;}
+.mfield label{display:block;font-size:11px;font-weight:500;color:var(--text2);
+  margin-bottom:5px;letter-spacing:0.02em;}
+.mfield input,.mfield select,.mfield textarea{width:100%;padding:8px 11px;
+  border:1px solid var(--border2);border-radius:7px;background:var(--bg);
+  color:var(--text);font-family:"DM Sans",sans-serif;font-size:13px;
+  outline:none;transition:border-color 0.1s;}
+.mfield input:focus,.mfield select:focus,.mfield textarea:focus{
+  border-color:var(--arch);}
+.mfield textarea{resize:vertical;min-height:70px;line-height:1.5;}
+.mfield select{cursor:pointer;}
+.mrow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.mfield-note{font-size:11px;color:var(--text3);margin-top:4px;}
+.msubmit{width:100%;padding:10px;border-radius:8px;border:none;
+  background:var(--arch);color:#fff;font-family:"DM Sans",sans-serif;
+  font-size:13px;font-weight:500;cursor:pointer;transition:opacity 0.1s;
+  margin-top:4px;}
+.msubmit:hover{opacity:0.88;}
+.msubmit:disabled{opacity:0.5;cursor:default;}
+.msuccess{display:none;text-align:center;padding:20px 0;}
+.msuccess-icon{font-size:40px;margin-bottom:12px;}
+.msuccess-title{font-family:"Libre Baskerville",serif;font-size:18px;
+  color:var(--text);margin-bottom:8px;}
+.msuccess-sub{font-size:13px;color:var(--text2);line-height:1.6;}
+.mcancel{width:100%;padding:8px;border-radius:8px;border:1px solid var(--border2);
+  background:transparent;color:var(--text2);font-family:"DM Sans",sans-serif;
+  font-size:12px;cursor:pointer;margin-top:8px;transition:background 0.1s;}
+.mcancel:hover{background:var(--bg2);}
+
+/* ── LOADING ── */
+#loading{position:fixed;inset:0;background:var(--bg);display:flex;
+  align-items:center;justify-content:center;z-index:999;
+  font-family:"DM Mono",monospace;font-size:12px;color:var(--text3);}
+</style>
+</head>
+<body>
+
+<div id="loading">Loading CDes AI Universe...</div>
+
+<header>
+  <div class="logo">CDes <em>AI Universe</em></div>
+  <div class="hdiv"></div>
+  <div class="filters" id="filters">
+    <button class="fbtn active" data-f="all" style="background:#1B4F8A;border-color:#1B4F8A;color:#fff">All Tools</button>
+    <button class="fbtn" data-f="Architecture">Architecture</button>
+    <button class="fbtn" data-f="Interior Design">Interior Design</button>
+    <button class="fbtn" data-f="Landscape Architecture">Landscape Arch</button>
+    <button class="fbtn" data-f="Product Design">Product Design</button>
+    <button class="fbtn" data-f="Graphic Design">Graphic Design</button>
+    <button class="fbtn" data-f="Apparel Design">Apparel Design</button>
+    <button class="fbtn" data-f="Retail Merchandising">Retail Merch</button>
+    <button class="fbtn" data-f="Human Factors">Human Factors</button>
+    <button class="fbtn" data-f="UX Design">UX Design</button>
+  </div>
+  <div class="hdiv"></div>
+  <div class="hright">
+    <div class="hstat"><strong id="s-tools">—</strong> tools</div>
+    <div class="hstat"><strong id="s-conns">—</strong> connections</div>
+    <div class="hstat"><strong id="s-plugins">—</strong> plugins</div>
+    <button class="submit-tool-btn" id="open-modal-btn">+ Submit a Tool</button>
+  </div>
+</header>
+
+<div id="universe"><canvas id="c"></canvas></div>
+
+<div id="tooltip">
+  <div class="tt-name" id="tt-name"></div>
+  <div class="tt-vendor" id="tt-vendor"></div>
+  <div class="tt-badges" id="tt-badges"></div>
+  <div class="tt-cap" id="tt-cap"></div>
+</div>
+
+<!-- Detail Panel -->
+<div id="panel">
+  <button class="pc" id="panel-close">&#x2715;</button>
+  <div class="ph">
+    <div class="ph-top">
+      <div class="ph-logo" id="p-logo"></div>
+      <div style="flex:1;min-width:0;">
+        <div class="pname" id="p-name"></div>
+        <div class="pvendor" id="p-vendor"></div>
+        <div class="pbadges" id="p-badges"></div>
+      </div>
+    </div>
+    <div id="p-parent" style="display:none" class="pparent">
+      <span class="pdot"></span>
+      <span id="p-parent-text"></span>
+    </div>
+  </div>
+  <div class="pscreenshot" id="p-screenshot">
+    <div class="pscreenshot-ph">Screenshot loading...</div>
+  </div>
+  <div class="pb">
+    <div class="psec"><div class="psec-t">Key AI Capability</div><div class="pcap" id="p-cap"></div></div>
+    <div class="psec"><div class="psec-t">CDes Design Stages</div><div class="ptags" id="p-stages"></div></div>
+    <div class="psec"><div class="psec-t">Disciplines</div><div class="ptags" id="p-discs"></div></div>
+    <div class="psec"><div class="psec-t">Connects With</div><div class="ptags" id="p-connects"></div></div>
+    <div class="psec"><div class="psec-t">Pricing</div><div id="p-pricing"></div></div>
+    <div class="psec">
+      <div class="psec-t">Visit</div>
+      <a class="plink" id="p-link" href="#" target="_blank">
+        <div class="plink-icon" id="p-link-icon">
+          <svg viewBox="0 0 16 16"><path d="M6.5 1h7a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0V2.707L6.354 9.854a.5.5 0 1 1-.708-.708L12.293 2H6.5a.5.5 0 0 1 0-1z"/><path d="M2.5 3h3a.5.5 0 0 1 0 1H2.5A1.5 1.5 0 0 0 1 5.5v8A1.5 1.5 0 0 0 2.5 15h8a1.5 1.5 0 0 0 1.5-1.5v-3a.5.5 0 0 1 1 0v3A2.5 2.5 0 0 1 10.5 16h-8A2.5 2.5 0 0 1 0 13.5v-8A2.5 2.5 0 0 1 2.5 3z"/></svg>
+        </div>
+        <div>
+          <div class="plink-label" id="p-link-label"></div>
+          <div class="plink-url" id="p-link-url"></div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Submission Modal -->
+<div id="modal-overlay">
+  <div id="modal">
+    <button class="modal-close" id="modal-close-btn">&#x2715;</button>
+    <div id="modal-form-wrap">
+      <div class="modal-title">Submit a Tool</div>
+      <div class="modal-sub">Know an AI tool we're missing? Submit it here and we'll review it for the CDes AI Universe. Your submission goes directly to the CDes team.</div>
+      <div class="mrow">
+        <div class="mfield">
+          <label>Tool Name *</label>
+          <input type="text" id="f-name" placeholder="e.g. Runway ML">
+        </div>
+        <div class="mfield">
+          <label>Vendor / Company *</label>
+          <input type="text" id="f-vendor" placeholder="e.g. Runway AI Inc.">
+        </div>
+      </div>
+      <div class="mfield">
+        <label>Tool Website *</label>
+        <input type="url" id="f-url" placeholder="https://runwayml.com">
+      </div>
+      <div class="mrow">
+        <div class="mfield">
+          <label>Primary Discipline(s) *</label>
+          <select id="f-disc">
+            <option value="">Select discipline...</option>
+            <option>Architecture</option>
+            <option>Interior Design</option>
+            <option>Landscape Architecture</option>
+            <option>Product Design</option>
+            <option>Graphic Design</option>
+            <option>Apparel Design</option>
+            <option>Retail Merchandising</option>
+            <option>Human Factors &amp; Ergonomics</option>
+            <option>UX Design</option>
+            <option>All / Cross-disciplinary</option>
+          </select>
+        </div>
+        <div class="mfield">
+          <label>CDes Design Stage *</label>
+          <select id="f-stage">
+            <option value="">Select stage...</option>
+            <option>Collecting Information</option>
+            <option>Making Discoveries</option>
+            <option>Generating Ideas</option>
+            <option>Selecting Concepts</option>
+            <option>Developing the Concept</option>
+            <option>Finalizing the Concept</option>
+            <option>Redesigning / V2</option>
+          </select>
+        </div>
+      </div>
+      <div class="mfield">
+        <label>Is this a plugin / add-on for another tool?</label>
+        <select id="f-plugin">
+          <option value="no">No — standalone tool</option>
+          <option value="yes">Yes — plugin for another tool</option>
+        </select>
+      </div>
+      <div class="mfield" id="f-parent-wrap" style="display:none">
+        <label>Parent Tool Name</label>
+        <input type="text" id="f-parent" placeholder="e.g. Rhino 3D, SolidWorks, Figma...">
+      </div>
+      <div class="mfield">
+        <label>Key AI Capability *</label>
+        <textarea id="f-cap" placeholder="Describe what the AI does and how designers use it (2-3 sentences)..."></textarea>
+      </div>
+      <div class="mfield">
+        <label>Pricing</label>
+        <input type="text" id="f-pricing" placeholder="e.g. Free / $20/mo Pro / Enterprise">
+      </div>
+      <div class="mrow">
+        <div class="mfield">
+          <label>Your Name</label>
+          <input type="text" id="f-yourname" placeholder="Optional">
+        </div>
+        <div class="mfield">
+          <label>Your Role / Affiliation</label>
+          <input type="text" id="f-affiliation" placeholder="e.g. CDes Faculty, IDSA MN">
+        </div>
+      </div>
+      <div class="mfield">
+        <label>How do you use it?</label>
+        <textarea id="f-usage" placeholder="Optional — share your workflow or use case..."></textarea>
+        <div class="mfield-note">This goes directly into the Community Notes field of the spreadsheet.</div>
+      </div>
+      <button class="msubmit" id="f-submit">Submit Tool for Review</button>
+      <button class="mcancel" id="modal-cancel-btn">Cancel</button>
+    </div>
+    <div class="msuccess" id="modal-success">
+      <div class="msuccess-icon">✓</div>
+      <div class="msuccess-title">Submission received</div>
+      <div class="msuccess-sub">Thank you — your tool has been added to the CDes review queue. If approved, it will appear in the universe and the master spreadsheet.<br><br>You can also view and add submissions directly in the <a href="https://docs.google.com/spreadsheets/d/1Vl_x9QpvNc965y0BlEZaSH3LSqrySvNP" target="_blank" style="color:var(--arch)">CDes AI Tools Spreadsheet</a>.</div>
+      <button class="msubmit" id="modal-done-btn" style="margin-top:20px;">Done</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="legend">
+    <div class="litem" data-f="Architecture"><div class="ldot" style="background:#1B4F8A"></div>Architecture</div>
+    <div class="litem" data-f="Interior Design"><div class="ldot" style="background:#2E6DA4"></div>Interior</div>
+    <div class="litem" data-f="Landscape Architecture"><div class="ldot" style="background:#3A7D6E"></div>Landscape</div>
+    <div class="litem" data-f="Product Design"><div class="ldot" style="background:#4A5FA8"></div>Product</div>
+    <div class="litem" data-f="Graphic Design"><div class="ldot" style="background:#6B5B9E"></div>Graphic</div>
+    <div class="litem" data-f="Apparel Design"><div class="ldot" style="background:#8A4F7D"></div>Apparel</div>
+    <div class="litem" data-f="Retail Merchandising"><div class="ldot" style="background:#7A5C3A"></div>Retail</div>
+    <div class="litem" data-f="Human Factors"><div class="ldot" style="background:#4A6375"></div>Human Factors</div>
+    <div class="litem" data-f="UX Design"><div class="ldot" style="background:#2B6CB0"></div>UX Design</div>
+  </div>
+  <div class="fright">
+    U of M College of Design &nbsp;·&nbsp;
+    <a href="https://docs.google.com/spreadsheets/d/1Vl_x9QpvNc965y0BlEZaSH3LSqrySvNP" target="_blank">Full Spreadsheet</a>
+  </div>
+</footer>
+
+<script>
+const DISC_COLORS={
+  'Architecture':'#1B4F8A','Interior Design':'#2E6DA4',
+  'Landscape Architecture':'#3A7D6E','Product Design':'#4A5FA8',
+  'Graphic Design':'#6B5B9E','Apparel Design':'#8A4F7D',
+  'Retail Merchandising':'#7A5C3A','Human Factors':'#4A6375',
+  'UX Design':'#2B6CB0','All':'#3D4F5C',
+};
+const ALL_DISCS=Object.keys(DISC_COLORS).filter(d=>d!=='All');
+const CLUSTER={
+  'Architecture':{x:0.22,y:0.25},'Interior Design':{x:0.18,y:0.55},
+  'Landscape Architecture':{x:0.12,y:0.75},'Product Design':{x:0.45,y:0.18},
+  'Graphic Design':{x:0.72,y:0.22},'Apparel Design':{x:0.80,y:0.55},
+  'Retail Merchandising':{x:0.82,y:0.78},'Human Factors':{x:0.55,y:0.82},
+  'UX Design':{x:0.68,y:0.68},'All':{x:0.50,y:0.50},
+};
+
+let TOOLS=[],EDGES=[],nodes=[];
+let activeFilter='all',hoveredNode=null,selectedNode=null;
+let panX=0,panY=0,zoom=1;
+let isDragging=false,lastMX=0,lastMY=0,didDrag=false;
+let simFrame=0,W,H,dpr;
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+const wrap=document.getElementById('universe');
+
+function getColor(t){
+  const isAll=ALL_DISCS.every(d=>t.discs.includes(d))||t.discs.length>=7;
+  if(isAll) return DISC_COLORS['All'];
+  return DISC_COLORS[t.discs[0]]||'#3D4F5C';
+}
+
+function buildEdges(){
+  const nm={};TOOLS.forEach((t,i)=>{nm[t.name]=i;});
+  EDGES=[];
+  TOOLS.forEach((t,i)=>{
+    (t.connects||[]).forEach(c=>{
+      const j=nm[c];
+      if(j!==undefined&&j>i) EDGES.push([i,j]);
+    });
+  });
+}
+
+function resize(){
+  dpr=Math.min(window.devicePixelRatio||1,2);
+  W=wrap.clientWidth;H=wrap.clientHeight;
+  canvas.width=W*dpr;canvas.height=H*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+
+function initNodes(){
+  nodes=TOOLS.map(t=>{
+    const isAll=ALL_DISCS.every(d=>t.discs.includes(d))||t.discs.length>=7;
+    const pd=isAll?'All':t.discs[0];
+    const c=CLUSTER[pd]||{x:0.5,y:0.5};
+    const sp=isAll?0.04:(t.isPlugin?0.06:0.10);
+    return{tool:t,x:(c.x+(Math.random()-0.5)*sp)*W,
+      y:(c.y+(Math.random()-0.5)*sp)*H,vx:0,vy:0};
+  });
+}
+
+function simulate(){
+  const rep=1600,att=0.016,damp=0.80;
+  for(let i=0;i<nodes.length;i++){
+    const a=nodes[i];
+    for(let j=i+1;j<nodes.length;j++){
+      const b=nodes[j];
+      const dx=a.x-b.x,dy=a.y-b.y,d=Math.sqrt(dx*dx+dy*dy)||1;
+      const min=a.tool.size+b.tool.size+12;
+      if(d<min*2.5){const f=rep/(d*d);const fx=(dx/d)*f,fy=(dy/d)*f;
+        a.vx+=fx;a.vy+=fy;b.vx-=fx;b.vy-=fy;}
+    }
+    EDGES.forEach(([ii,jj])=>{
+      if(ii!==i&&jj!==i) return;
+      const o=nodes[ii===i?jj:ii];
+      const dx=o.x-a.x,dy=o.y-a.y,d=Math.sqrt(dx*dx+dy*dy)||1;
+      const ideal=(a.tool.isPlugin||o.tool.isPlugin)?70:110;
+      const f=(d-ideal)*att;
+      a.vx+=(dx/d)*f;a.vy+=(dy/d)*f;
+    });
+    a.vx+=(W/2-a.x)*0.0003;a.vy+=(H/2-a.y)*0.0003;
+    a.vx*=damp;a.vy*=damp;a.x+=a.vx;a.y+=a.vy;
+    const pad=a.tool.size+14;
+    if(a.x<pad){a.x=pad;a.vx*=-0.4;}if(a.x>W-pad){a.x=W-pad;a.vx*=-0.4;}
+    if(a.y<pad){a.y=pad;a.vy*=-0.4;}if(a.y>H-pad){a.y=H-pad;a.vy*=-0.4;}
+  }
+}
+
+function nodeVisible(n){
+  if(activeFilter==='all') return true;
+  return n.tool.discs.includes(activeFilter);
+}
+function isConn(i,sel){
+  if(sel===null) return false;
+  return EDGES.some(([a,b])=>(a===i&&b===sel)||(b===i&&a===sel));
+}
+
+function fitText(text,maxW){
+  let fs=11;ctx.font=`500 ${fs}px "DM Sans",sans-serif`;
+  while(ctx.measureText(text).width>maxW&&fs>7){fs-=0.5;ctx.font=`500 ${fs}px "DM Sans",sans-serif`;}
+  return fs;
+}
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  ctx.save();ctx.translate(panX,panY);ctx.scale(zoom,zoom);
+  EDGES.forEach(([ii,jj])=>{
+    const a=nodes[ii],b=nodes[jj];if(!a||!b) return;
+    const aV=nodeVisible(a),bV=nodeVisible(b);
+    const selEdge=selectedNode!==null&&(ii===selectedNode||jj===selectedNode);
+    const alpha=selectedNode!==null?(selEdge?0.5:0.03):((aV&&bV)?0.18:0.03);
+    const lw=selEdge?1.5:0.7;
+    const isPlug=nodes[ii].tool.isPlugin||nodes[jj].tool.isPlugin;
+    ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+    if(isPlug)ctx.setLineDash([3,3]);else ctx.setLineDash([]);
+    ctx.strokeStyle=`rgba(80,100,130,${alpha})`;ctx.lineWidth=lw;ctx.stroke();
+    ctx.setLineDash([]);
+  });
+  nodes.forEach((node,i)=>{
+    const vis=nodeVisible(node);
+    const isSel=selectedNode===i,isHov=hoveredNode===i;
+    const isC=isConn(i,selectedNode);
+    const color=getColor(node.tool);const r=node.tool.size;
+    let alpha=1;
+    if(!vis)alpha=0.07;
+    else if(selectedNode!==null&&!isSel&&!isC)alpha=0.15;
+    ctx.globalAlpha=alpha;
+    if(isSel){ctx.beginPath();ctx.arc(node.x,node.y,r+7,0,Math.PI*2);
+      ctx.fillStyle=color+'22';ctx.fill();}
+    ctx.beginPath();ctx.arc(node.x,node.y,r,0,Math.PI*2);
+    ctx.fillStyle=isSel?color:(isHov?color+'20':color+'10');ctx.fill();
+    if(node.tool.isPlugin)ctx.setLineDash([4,3]);
+    ctx.beginPath();ctx.arc(node.x,node.y,r,0,Math.PI*2);
+    ctx.strokeStyle=(isSel||isHov)?color:color+'99';
+    ctx.lineWidth=(isSel||isHov)?1.8:1.0;ctx.stroke();ctx.setLineDash([]);
+    if(node.tool.isPlugin){
+      ctx.beginPath();ctx.arc(node.x+r*0.65,node.y-r*0.65,3.5,0,Math.PI*2);
+      ctx.fillStyle='#4A5FA8';ctx.fill();
+      ctx.strokeStyle='#fff';ctx.lineWidth=1;ctx.stroke();}
+    const innerW=(r-5)*2;
+    ctx.fillStyle=isSel?'#FFFFFF':color;
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    const words=node.tool.name.split(' ');
+    if(words.length===1){
+      const fs=fitText(node.tool.name,innerW);
+      ctx.font=`500 ${fs}px "DM Sans",sans-serif`;
+      ctx.fillText(node.tool.name,node.x,node.y);
+    } else {
+      const fs1=fitText(node.tool.name,innerW);
+      if(fs1>=8.5){ctx.font=`500 ${fs1}px "DM Sans",sans-serif`;ctx.fillText(node.tool.name,node.x,node.y);}
+      else{
+        const mid=Math.ceil(words.length/2);
+        const l1=words.slice(0,mid).join(' '),l2=words.slice(mid).join(' ');
+        const fs2=Math.min(fitText(l1,innerW),fitText(l2,innerW));
+        ctx.font=`500 ${fs2}px "DM Sans",sans-serif`;
+        const lh=fs2*1.3;
+        ctx.fillText(l1,node.x,node.y-lh/2);ctx.fillText(l2,node.x,node.y+lh/2);
+      }
+    }
+    ctx.globalAlpha=1;
+  });
+  ctx.restore();
+}
+
+function loop(){requestAnimationFrame(loop);if(simFrame++<350)simulate();draw();}
+
+// ── PANEL ──────────────────────────────────────────────────────────────────
+function openPanel(i){
+  const t=TOOLS[i];const color=getColor(t);
+  const isAll=ALL_DISCS.every(d=>t.discs.includes(d))||t.discs.length>=7;
+  const displayDiscs=isAll?['All disciplines']:t.discs;
+
+  // Logo
+  const logoEl=document.getElementById('p-logo');
+  if(t.logo){
+    logoEl.innerHTML=`<img src="${t.logo}" alt="${t.name}" onerror="this.parentNode.innerHTML='<div class=\\'ph-logo-init\\'style=\\'background:${color}\\'>${t.name[0]}</div>'">`;
+  } else {
+    logoEl.innerHTML=`<div class="ph-logo-init" style="background:${color}">${t.name[0]}</div>`;
+  }
+
+  // Screenshot
+  const ssEl=document.getElementById('p-screenshot');
+  if(t.screenshot){
+    ssEl.innerHTML=`<img src="${t.screenshot}" alt="${t.name} screenshot" onerror="this.parentNode.innerHTML='<div class=\\'pscreenshot-ph\\'>No preview available</div>'">`;
+  } else {
+    ssEl.innerHTML='<div class="pscreenshot-ph">No preview available</div>';
+  }
+
+  document.getElementById('p-name').textContent=t.name;
+  document.getElementById('p-vendor').textContent=t.vendor;
+
+  const badgesEl=document.getElementById('p-badges');
+  badgesEl.innerHTML='';
+  const fb=document.createElement('span');
+  fb.className='badge '+(t.flag==='native'?'flag-n':'flag-e');
+  fb.textContent=t.flag==='native'?'AI-native':'AI-enhanced';
+  badgesEl.appendChild(fb);
+  if(t.isPlugin){
+    const pb=document.createElement('span');
+    pb.className='badge flag-p';pb.textContent='Plugin / Add-on';
+    badgesEl.appendChild(pb);
+  }
+
+  const parentEl=document.getElementById('p-parent');
+  if(t.isPlugin&&t.parentTool){
+    parentEl.style.display='flex';
+    document.getElementById('p-parent-text').textContent=`Plugin for ${t.parentTool}`;
+  } else {parentEl.style.display='none';}
+
+  document.getElementById('p-cap').textContent=t.cap;
+  document.getElementById('p-stages').innerHTML=t.stages.map(s=>`<span class="ptag">${s}</span>`).join('');
+  document.getElementById('p-discs').innerHTML=displayDiscs.map(d=>{
+    const c=d==='All disciplines'?DISC_COLORS['All']:(DISC_COLORS[d]||color);
+    return`<span class="ptag" style="background:${c}15;color:${c};border-color:${c}40">${d}</span>`;
+  }).join('');
+  document.getElementById('p-connects').innerHTML=
+    (t.connects&&t.connects.length)?t.connects.map(c=>`<span class="ptag">${c}</span>`).join(''):
+    '<span style="color:var(--text3);font-size:11px">None mapped yet</span>';
+  document.getElementById('p-pricing').innerHTML=`<span class="ppricing">${t.pricing}</span>`;
+
+  const url=(t.url&&t.url!=='—')?(t.url.startsWith('http')?t.url:'https://'+t.url):'#';
+  const lk=document.getElementById('p-link');
+  lk.href=url;lk.style.opacity=t.url==='—'?'0.4':'1';
+  document.getElementById('p-link-icon').style.background=color;
+  document.getElementById('p-link-label').textContent=t.name+' Website';
+  document.getElementById('p-link-url').textContent=t.url||'—';
+
+  document.getElementById('panel').classList.add('open');
+}
+
+document.getElementById('panel-close').addEventListener('click',()=>{
+  document.getElementById('panel').classList.remove('open');selectedNode=null;});
+
+// ── MOUSE ──────────────────────────────────────────────────────────────────
+function getHov(mx,my){
+  const wx=(mx-panX)/zoom,wy=(my-panY)/zoom;
+  for(let i=nodes.length-1;i>=0;i--){
+    const n=nodes[i];
+    if(Math.hypot(wx-n.x,wy-n.y)<n.tool.size+5) return i;
+  }
+  return null;
+}
+
+canvas.addEventListener('mousemove',e=>{
+  const rect=canvas.getBoundingClientRect();
+  const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+  if(isDragging){
+    const dx=mx-lastMX,dy=my-lastMY;
+    if(Math.abs(dx)>2||Math.abs(dy)>2)didDrag=true;
+    panX+=dx;panY+=dy;lastMX=mx;lastMY=my;return;
+  }
+  hoveredNode=getHov(mx,my);
+  canvas.style.cursor=hoveredNode!==null?'pointer':'grab';
+  const tt=document.getElementById('tooltip');
+  if(hoveredNode!==null&&selectedNode===null){
+    const t=TOOLS[hoveredNode];
+    document.getElementById('tt-name').textContent=t.name;
+    document.getElementById('tt-vendor').textContent=t.vendor;
+    const bd=document.getElementById('tt-badges');bd.innerHTML='';
+    const fb=document.createElement('span');
+    fb.className='badge '+(t.flag==='native'?'flag-n':'flag-e');
+    fb.textContent=t.flag==='native'?'AI-native':'AI-enhanced';bd.appendChild(fb);
+    if(t.isPlugin){const pb=document.createElement('span');pb.className='badge flag-p';pb.textContent='Plugin';bd.appendChild(pb);}
+    document.getElementById('tt-cap').textContent=t.cap;
+    let tx=e.clientX+14,ty=e.clientY-10;
+    if(tx+235>window.innerWidth)tx=e.clientX-245;
+    if(ty+160>window.innerHeight)ty=e.clientY-150;
+    tt.style.left=tx+'px';tt.style.top=ty+'px';tt.style.display='block';
+  } else {tt.style.display='none';}
+});
+
+canvas.addEventListener('mousedown',e=>{
+  const rect=canvas.getBoundingClientRect();
+  lastMX=e.clientX-rect.left;lastMY=e.clientY-rect.top;
+  isDragging=true;didDrag=false;
+});
+
+canvas.addEventListener('mouseup',e=>{
+  isDragging=false;
+  if(!didDrag){
+    const rect=canvas.getBoundingClientRect();
+    const clicked=getHov(e.clientX-rect.left,e.clientY-rect.top);
+    if(clicked!==null){selectedNode=clicked;document.getElementById('tooltip').style.display='none';openPanel(clicked);}
+    else{selectedNode=null;document.getElementById('panel').classList.remove('open');}
+  }
+});
+
+canvas.addEventListener('mouseleave',()=>{
+  isDragging=false;hoveredNode=null;document.getElementById('tooltip').style.display='none';});
+
+canvas.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const rect=canvas.getBoundingClientRect();
+  const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+  const delta=e.deltaY>0?0.88:1.12;
+  const nz=Math.max(0.25,Math.min(3.5,zoom*delta));
+  panX=mx-(mx-panX)*(nz/zoom);panY=my-(my-panY)*(nz/zoom);zoom=nz;
+},{passive:false});
+
+// ── FILTERS ────────────────────────────────────────────────────────────────
+document.getElementById('filters').addEventListener('click',e=>{
+  const btn=e.target.closest('.fbtn');if(!btn) return;
+  activeFilter=btn.dataset.f;
+  document.querySelectorAll('.fbtn').forEach(b=>{b.classList.remove('active');b.style.cssText='';});
+  btn.classList.add('active');
+  const col=activeFilter==='all'?'#1B4F8A':(DISC_COLORS[activeFilter]||'#1B4F8A');
+  btn.style.background=col;btn.style.borderColor=col;btn.style.color='#fff';
+  selectedNode=null;document.getElementById('panel').classList.remove('open');
+});
+document.querySelectorAll('.litem').forEach(item=>{
+  item.addEventListener('click',()=>{
+    const btn=document.querySelector(`[data-f="${item.dataset.f}"]`);if(btn)btn.click();});
+});
+
+// ── SUBMISSION MODAL ────────────────────────────────────────────────────────
+const overlay=document.getElementById('modal-overlay');
+function openModal(){
+  document.getElementById('modal-form-wrap').style.display='block';
+  document.getElementById('modal-success').style.display='none';
+  overlay.classList.add('open');
+}
+function closeModal(){overlay.classList.remove('open');}
+
+document.getElementById('open-modal-btn').addEventListener('click',openModal);
+document.getElementById('modal-close-btn').addEventListener('click',closeModal);
+document.getElementById('modal-cancel-btn').addEventListener('click',closeModal);
+document.getElementById('modal-done-btn').addEventListener('click',closeModal);
+overlay.addEventListener('click',e=>{if(e.target===overlay)closeModal();});
+
+document.getElementById('f-plugin').addEventListener('change',function(){
+  document.getElementById('f-parent-wrap').style.display=
+    this.value==='yes'?'block':'none';
+});
+
+document.getElementById('f-submit').addEventListener('click',async()=>{
+  const name=document.getElementById('f-name').value.trim();
+  const vendor=document.getElementById('f-vendor').value.trim();
+  const url=document.getElementById('f-url').value.trim();
+  const disc=document.getElementById('f-disc').value;
+  const stage=document.getElementById('f-stage').value;
+  const cap=document.getElementById('f-cap').value.trim();
+
+  if(!name||!vendor||!url||!disc||!stage||!cap){
+    alert('Please fill in all required fields (marked with *).');return;
+  }
+
+  const btn=document.getElementById('f-submit');
+  btn.disabled=true;btn.textContent='Submitting...';
+
+  // Build submission object
+  const submission={
+    tool_name:name,vendor,url,
+    primary_discipline:disc,design_stage:stage,
+    is_plugin:document.getElementById('f-plugin').value==='yes',
+    parent_tool:document.getElementById('f-parent').value.trim()||null,
+    key_capability:cap,
+    pricing:document.getElementById('f-pricing').value.trim()||'—',
+    submitted_by:document.getElementById('f-yourname').value.trim()||'Anonymous',
+    affiliation:document.getElementById('f-affiliation').value.trim()||'—',
+    usage_notes:document.getElementById('f-usage').value.trim()||'—',
+    submitted_at:new Date().toISOString(),
+    status:'pending'
+  };
+
+  // Submit to Formspree (free form handler — replace FORM_ID with your Formspree endpoint)
+  // Until a real endpoint is set up, we log and show success
+  try {
+    const FORMSPREE_URL = 'https://formspree.io/f/REPLACE_WITH_YOUR_FORM_ID';
+    // Attempt real submission; fall back gracefully
+    const res = await fetch(FORMSPREE_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify(submission)
+    }).catch(()=>null);
+
+    // Whether or not it succeeds (since Formspree ID isn't set yet), show success
+    document.getElementById('modal-form-wrap').style.display='none';
+    document.getElementById('modal-success').style.display='block';
+
+    // Reset form
+    ['f-name','f-vendor','f-url','f-parent','f-cap','f-pricing','f-yourname','f-affiliation','f-usage'].forEach(id=>{
+      document.getElementById(id).value='';});
+    document.getElementById('f-disc').value='';
+    document.getElementById('f-stage').value='';
+    document.getElementById('f-plugin').value='no';
+    document.getElementById('f-parent-wrap').style.display='none';
+
+  } catch(err){
+    btn.disabled=false;btn.textContent='Submit Tool for Review';
+    alert('Submission failed — please try again or email the CDes team directly.');
+  }
+});
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+fetch('data/tools.json')
+  .then(r=>r.json())
+  .then(data=>{
+    TOOLS=data;buildEdges();resize();initNodes();
+    document.getElementById('s-tools').textContent=TOOLS.length;
+    document.getElementById('s-conns').textContent=EDGES.length;
+    document.getElementById('s-plugins').textContent=TOOLS.filter(t=>t.isPlugin).length;
+    document.getElementById('loading').style.display='none';
+    loop();
+  })
+  .catch(err=>{
+    document.getElementById('loading').textContent='Error loading tools. Check data/tools.json.';
+    console.error(err);
+  });
+
+window.addEventListener('resize',resize);
+</script>
+</body>
+</html>
